@@ -1,0 +1,46 @@
+<div class="controls">
+    <div class="camera-info">
+        <label class="control-label">Position:</label>
+        <input type="number" class="test-input" ng-model="graphics.camera.position.x" min=-Infinity max=Infinity placeholder="X">
+        <input type="number" class="test-input" ng-model="graphics.camera.position.y" min="-Infinity" max="Infinity" placeholder="Y">
+        <input type="number" class="test-input" ng-model="graphics.camera.position.z" min="-Infinity" max="Infinity" placeholder="Z">
+        <label class="control-label">Rotation:</label>
+        <div class="test-input">
+            <input id="camAngle1" ng-model="angleX" ng-model-options="{ getterSetter: true }" type="range" min=0>
+        </div>
+        <div class="test-input">
+            <input id="camAngle2" ng-model="angleY" ng-model-options="{ getterSetter: true }" type="range" min=0>
+        </div>
+        <div class="test-input">
+            <input id="camAngle3" ng-model="angleZ" ng-model-options="{ getterSetter: true }" type="range" min=0>
+        </div>
+        <button type="button" class="btn btn-info" ng-click="lookAt()">Look at selected object</button>
+    </div>
+    <div class="object-info" ng-repeat="gobj in gObject.objects">
+
+        <label class="control-label">Mass:</label>
+        <input type="number" class="test-input" ng-model="gobj.mass" placeholder="Mass (kg)">
+
+        <label class="control-label">Color:</label>
+        <input type="color" class="test-input" ng-model="gobj.color" ng-model-options="{ getterSetter: true }" placeholder="#000000">
+
+        <label class="control-label">Position:</label>
+        <input type="number" class="test-input" ng-model="gobj.position.x" placeholder="X">
+        <input type="number" class="test-input" ng-model="gobj.position.y" placeholder="Y">
+        <input type="number" class="test-input" ng-model="gobj.position.z" placeholder="Z">
+
+        <label class="control-label">Velocity:</label>
+        <input type="number" class="test-input" ng-model="gobj.velocity.x" placeholder="X">
+        <input type="number" class="test-input" ng-model="gobj.velocity.y" placeholder="Y">
+        <input type="number" class="test-input" ng-model="gobj.velocity.z" placeholder="Z">
+        
+        <button type="button" class="btn btn-danger" ng-click="$parent.objectRemove(gobj)">Remove</button>
+        <button type="button" class="btn btn-info" ng-click="$parent.selectObject(gobj)">Select</button>
+    </div>
+    <button type="button" class="btn btn-info" ng-click="objectCreate()">Create New Object</button>
+    <button class="btn" ng-class="startBtnClass()" ng-click="toggleStart()">{{startBtnText()}}</button>
+    <div style="display:inline-block;" ng-hide="!isStarted">
+    <button class="btn" ng-class="pauseForceClass()" ng-click="toggleForcePause()">{{pauseForceText()}}</button>
+    <button class="btn" ng-class="pauseGraphicsClass()" ng-click="toggleGraphicsPause()">{{pauseGraphicsText()}}</button>
+    </div>
+</div>

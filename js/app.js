@@ -1,4 +1,4 @@
-  var app = angular.module("gravity-simulator", []);
+  var app = angular.module("gravitySimulator", []);
   
   app.config(function () {
       //App Config here

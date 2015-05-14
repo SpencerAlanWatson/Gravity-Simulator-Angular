@@ -1,0 +1,25 @@
+{
+    "jscodehints.detectedExclusions": [
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-rhino-1.7.4.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.6.2.min.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/lessc-rhino-1.7.4.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/lessc-rhino-1.6.2.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/lessc-rhino-1.6.3.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/js/controls.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.7.0.min.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.7.1.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.7.1.min.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/js/force.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/js/vendor/angular-mocks.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/dev/speed-test.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/workers/force-worker.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.5.0.min.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.4.2.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.5.1.min.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.6.0.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/jasmine/lib/jasmine-2.0.2/jasmine-html.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/jasmine/lib/jasmine-2.0.2/jasmine.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/js/gravity-object.js",
+        "/Users/197134/Desktop/Programming/webdev/Gravity-Simulator-Angular/bower_components/less/dist/less-1.6.2.js"
+    ]
+}

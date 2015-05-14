@@ -1,5 +1,5 @@
-    app.service('graphics', ['$rootScope', 'gObject',
-        function ($rootScope, gObject) {
+    app.service('graphics', ['$rootScope', '$window', '$document', 'gObject',
+        function ($rootScope, $window, $document, gObject) {
             var service = {
                 tickLast: 0,
                 animId: 0,
@@ -10,14 +10,21 @@
                 rotationSpeed: Math.PI / 4,
                 translationSpeed: 1,
 
-                canvasSize: new THREE.Vector2(window.innerWidth, window.innerHeight),
-                radius: 100,
+                canvasSize: new THREE.Vector2($window.innerWidth, $window.innerHeight),
+                radius: 300,
                 camStartPos: new THREE.Vector3(0, 0, 0),
                 lastAngle: new THREE.Vector3(0, 0, 0),
-                selectedObject: gObject.objects[0],
+                selectedObject: null,
                 renderer: null,
                 scene: null,
-                camera: null,
+                camera: new THREE.PerspectiveCamera(
+                    45,
+                    $window.innerWidth / $window.innerHeight,
+                    0.1, 10000),
+                target: new THREE.Vector3(),
+
+                raycaster: new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(), 0.1, 1000),
+                light: null,
 
 
                 clearCanvas: function (ctx) {
@@ -71,20 +78,57 @@
                 },
 
                 rotateCameraAround: function (obj, angle) {
+                    if (obj) {
+                        var endpos = service.camera.position.clone().sub(obj.position),
+                            radius = service.radius; //endpos.distanceTo(service.camStartPos);
+                        var quat = new THREE.Quaternion().setFromUnitVectors(service.camera.up, new THREE.Vector3(0, 1, 0));
+                        endpos.applyQuaternion(quat);
 
-                    var endpos = obj.position.clone(),
-                        radius = service.radius; //endpos.distanceTo(service.camStartPos);
+                        endpos.x = radius * Math.sin(angle.y) * Math.sin(angle.x);
+                        endpos.y = radius * Math.cos(angle.y);
+                        endpos.z = radius * Math.sin(angle.y) * Math.cos(angle.x);
+                        endpos.applyQuaternion(quat.inverse());
 
-                    endpos.x += radius * Math.cos(angle.x);
-                    endpos.y += radius * Math.cos(angle.y);
-                    endpos.z += radius * Math.cos(angle.z);
-                    service.lastAngle.copy(angle);
-                    service.camera.position.copy(endpos);
-                    service.camera.lookAt(obj.position);
+                        service.camera.position.copy(obj.position).add(endpos);
+
+                        service.camera.lookAt(obj.position);
+                        //endpos.x += radius * Math.cos(angle.x);
+                        //endpos.y += radius * Math.cos(angle.y);
+                        //endpos.z += radius * Math.cos(angle.z);
+                        service.lastAngle.copy(angle);
+                        //service.camera.position.copy(endpos);
+                        //service.camera.lookAt(obj.position);
+                    } else if (typeof angle === 'undefined') {
+
+                    }
 
                 },
                 rotateCameraAroundSelected: function (angle) {
-                    service.rotateCameraAround(service.selectedObject, angle);
+                    //service.rotateCameraAround(service.selectedObject, angle);
+                },
+                convertCanvasPos: function (canvasPos) {
+                    //  var widthHalf = canvasSize.x / 2,
+                    //    heightHalf = canvasSize.y / 2;
+                    var projector = new THREE.Projector(),
+                        vector = canvasPos.clone();
+                    projector.unprojectVector(vector, service.camera);
+
+                    return vector;
+                },
+                click: function (clickPos) {
+                    var vector = service.convertCanvasPos(clickPos),
+                        diff = vector.clone().sub(service.camera.position),
+                        raycaster = new THREE.Raycaster(service.camera.position, diff.normalize());
+
+
+                    var intersections = raycaster.intersectObjects(gObject.objects);
+                    if (intersections && intersections.length > 0) {
+                        console.log(intersections);
+                        var object = intersections[0].object;
+                        //service.selectedObject = object;
+                        $rootScope.$broadcast('graphics.clickObject', object, intersections[0]);
+
+                    }
                 },
                 GraphicsLoop: function (tickNow) {
                     service.animId = requestAnimationFrame(service.GraphicsLoop);
@@ -94,96 +138,26 @@
                     if (!service.tickLast) {
                         tickDelta = 0;
                     }
-                    service.rotateCameraAroundSelected(service.lastAngle);
+                    service.controls.update();
+                    //service.rotateCameraAroundSelected(service.lastAngle);
 
                     service.renderer.render(service.scene, service.camera);
                     $rootScope.$broadcast('graphics.draw');
                     service.tickLast = tickNow; //window.performance.now();
 
-                },
 
-                /*forceLoopRunner() {
-                    var tickNow = window.performance.now(),
-                        tickDelta = tickNow - tickLast;
-                    if (!tickLast) {
-                        tickDelta = 0;
-                    }
-                    ForceObj.ForceLoop(Objects, tickDelta);
-                    timeoutId = setTimeout(forceLoopRunner, 0);
-                    tickLast = tickNow;
-                }*/
-                keyRotation: function (index, clockwise, start) {
-                    var mod = start ? rotationSpeed * (clockwise ? 1 : -1) : 0;
-                    if (index === 'x')
-                        rotation.x = mod;
-                    else if (index === 'y')
-                        rotation.y = mod;
-                    else
-                        rotation.z = mod;
                 },
+                onWindowResize: function onWindowResize() {
 
-                keyTranslate: function (index, forward, start) {
-                    var mod = start ? translationSpeed * (forward ? 1 : -1) : 0;
-                    if (index === 'x')
-                        translation.x = mod;
-                    else if (index === 'y')
-                        translation.y = mod;
-                    else
-                        translation.z = mod;
+                    service.camera.aspect = $window.innerWidth / $window.innerHeight;
+                    service.camera.updateProjectionMatrix();
+                    service.canvasSize.x = $window.innerWidth;
+                    service.canvasSize.y = $window.innerHeight;
+                    service.renderer.setSize($window.innerWidth, $window.innerHeight);
 
                 },
 
-                switchCamera: function (cameraNumber) {
-                    service.camera = service.Cameras[cameraNumber];
-                },
 
-
-                logVector3Objects: function (Array, vecIndex) {
-                    console.group(vecIndex);
-                    _.each(Array, function (element, index) {
-                        console.group(index);
-                        console.log("X: ", element[vecIndex].x);
-                        console.log("Y: ", element[vecIndex].y);
-                        console.log("Z: ", element[vecIndex].z);
-                        console.groupEnd();
-                    });
-                    console.groupEnd();
-                },
-
-                onKeyDown: function (event) {
-                    //console.log('Key Down', event);
-                    return;
-                    var keyCode = event.keyCode;
-                    if (event.altKey && keyAltBinds[keyCode])
-                        service.keyAltBinds[keyCode](true);
-                    else if (keyBinds[keyCode])
-                        service.keyBinds[keyCode](true);
-
-                    if (keyCode >= 48 && keyCode <= 57) { //0 - 9 keys
-                        if (event.shiftKey)
-                            keyCode += 10;
-                        if (event.altKey)
-                            keyCode += 20;
-                        switchCamera(keyCode - 48);
-                    }
-                    event.preventDefault(true);
-                    event.stopPropagation();
-
-                    return false;
-                },
-
-                onKeyUp: function (event) {
-                    return;
-                    var keyCode = event.keyCode;
-                    if (event.altKey && keyAltBinds[keyCode])
-                        service.keyAltBinds[keyCode](false);
-                    else if (keyBinds[keyCode])
-                        service.keyBinds[keyCode](false);
-                    event.preventDefault(true);
-                    event.stopPropagation();
-
-                    return false;
-                },
                 createCameras: function () {
                     var Cameras = [];
                     var xi, yi, zi, xval, yval, zval,
@@ -191,56 +165,54 @@
                         val = 250,
                         fov = 45,
                         lookPos = new THREE.Vector3(0, 0, 0);
-                    /*for (xi = -1; xi <= 1; ++xi) {
-                        xval = val * xi;
-                        for (yi = -1; yi <= 1; ++yi) {
-                            yval = val * yi;
-                            for (zi = -1; zi <= 1; ++zi) {
-                                if (xi || yi || zi) {
-                                    zval = val * zi;
-                                    Cameras[index] = new THREE.PerspectiveCamera(
-                                        fov,
-                                        service.canvasSize.x / service.canvasSize.y,
-                                        0.1, 1000); //0, canvasSize.x, 0, canvasSize.y, 0.1, 1000);
-                                    Cameras[index].position.x = xval;
-                                    Cameras[index].position.y = yval;
-                                    Cameras[index].position.z = zval;
-                                    Cameras[index].lookAt(lookPos);
-                                    ++index;
-                                }
-                            }
-                        }
-                    }
-                    service.Cameras = Cameras;
-                    service.switchCamera(0);*/
-                    service.camera = new THREE.PerspectiveCamera(
-                        fov,
-                        service.canvasSize.x / service.canvasSize.y,
-                        0.1, 1000); //0, canvasSize.x, 0, canvasSize.y, 0.1, 1000);
-                    service.rotateCameraAroundSelected(new THREE.Vector3());
-                    //service.camStartPos = //new THREE.Vector3(service.radius, 0, 0);
-
-                    //service.camera.position.copy(service.camStartPos);
-                    //service.camera.lookAt(gObject.objects[0].position);
+                    //0, canvasSize.x, 0, canvasSize.y, 0.1, 1000);
+                    service.camera.position.z = 500;
+                    //service.rotateCameraAroundSelected(new THREE.Vector3());
                 },
 
                 Start: function () {
                     service.animId = requestAnimationFrame(service.GraphicsLoop);
-                    service.renderer = new THREE.WebGLRenderer();
+
+                    service.renderer = new THREE.WebGLRenderer({
+                        antialias: true,
+                        alpha: true,
+                        //preserveDrawingBuffer: true,
+                    });
+
                     service.renderer.setSize(service.canvasSize.x, service.canvasSize.y);
+                    service.renderer.setClearColor(0, 0);
 
                     service.scene = new THREE.Scene();
-                    service.selectedObject = gObject.objects[0];
-
-                    service.createCameras();
-
-                    document.body.appendChild(service.renderer.domElement);
-                    document.body.addEventListener('keydown', service.onKeyDown, true);
-                    document.body.addEventListener('keyup', service.onKeyUp, true);
 
                     _.each(gObject.objects, function (gObject) {
                         service.scene.add(gObject);
                     });
+                    service.selectedObject = gObject.objects[0];
+                    service.createCameras();
+                    /*var lineGeo = new THREE.Geometry();
+                    lineGeo.vertices.push(
+                        gObject.objects[0].position,
+                        gObject.objects[1].position
+                    );
+                    service.line = new THREE.Line(lineGeo);
+                    service.scene.add(service.line);*/
+                    service.light = new THREE.AmbientLight(0x404040); // soft white light
+                    service.scene.add(service.light);
+
+
+
+                    $document.find('#main').append(service.renderer.domElement);
+                    $window.addEventListener('resize', service.onWindowResize);
+                    $rootScope.$broadcast('graphics.initialize', service);
+                    service.controls = new THREE.OrbitControls(service.camera, service.renderer.domElement);
+
+                    service.controls.damping = 0.2;
+                    service.controls.target = service.target;
+
+                    //document.body.addEventListener('keydown', service.onKeyDown, true);
+                    //                  document.body.addEventListener('keyup', service.onKeyUp, true);
+
+
 
                 },
 
@@ -250,54 +222,42 @@
 
                     service.tickLast = null;
 
-                    document.body.removeEventListener('keydown', service.onKeyDown, true);
-                    document.body.removeEventListener('keyup', service.onKeyUp, true);
-                    document.body.removeChild(service.renderer.domElement);
+                    //document.body.removeEventListener('keydown', service.onKeyDown, true);
+                    //document.body.removeEventListener('keyup', service.onKeyUp, true);
+                    $document.find('#main').empty(); //angular.element(service.renderer.domElement));
+                    $window.removeEventListener('resize', service.onWindowResize);
+                    $rootScope.$broadcast('graphics.deinitialize', service);
+
+
                 },
                 Pause: function () {
                     cancelAnimationFrame(service.animId);
                     service.tickLast = null;
+                    $rootScope.$broadcast('graphics.pause');
+
                 },
                 Unpause: function () {
                     service.animId = requestAnimationFrame(service.GraphicsLoop);
+                    $rootScope.$broadcast('graphics.unpause');
+
                 }
             };
-            service.keyBinds = {
-                81: _.partial(service.keyRotation, 'y', false), //Q
-                87: _.partial(service.keyTranslate, 'y', false), //W
-                69: _.partial(service.keyRotation, 'y', true), //E
-                65: _.partial(service.keyTranslate, 'x', false), //A
-                83: _.partial(service.keyTranslate, 'y', true), //S
-                68: _.partial(service.keyTranslate, 'x', true) //D
-            };
-            service.keyAltBinds = {
-                81: _.partial(service.keyRotation, 'x', false), //Q
-                87: _.partial(service.keyTranslate, 'z', false), //W
-                69: _.partial(service.keyRotation, 'x', true), //E
-                65: _.partial(service.keyTranslate, 'x', false), //A
-                83: _.partial(service.keyTranslate, 'z', true), //S
-                68: _.partial(service.keyTranslate, 'x', true) //D
-            };
-            service.keyCtrlBinds = {
-                81: _.partial(service.keyRotation, 'x', false), //Q
-                87: _.partial(service.keyTranslate, 'z', false), //W
-                69: _.partial(service.keyRotation, 'x', true), //E
-                65: _.partial(service.keyTranslate, 'x', false), //A
-                83: _.partial(service.keyTranslate, 'z', true), //S
-                68: _.partial(service.keyTranslate, 'x', true) //D
-            };
-            service.keyShiftBinds = {
-                81: _.partial(service.keyRotation, 'x', false), //Q
-                87: _.partial(service.keyTranslate, 'z', false), //W
-                69: _.partial(service.keyRotation, 'x', true), //E
-                65: _.partial(service.keyTranslate, 'x', false), //A
-                83: _.partial(service.keyTranslate, 'z', true), //S
-                68: _.partial(service.keyTranslate, 'x', true) //D
-            };
+
+            $rootScope.$on('controls.selectObject', function (event, newObject, lastObject) {
+                if (service.controls) {
+                    if (newObject)
+                        service.controls.target = newObject.position;
+                    else
+                        service.controls.target = new THREE.Vector3();
+                } else {
+                    service.target =  newObject.position;
+                }
+            });
 
             $rootScope.$on('gobject.remove', function (event, gobj) {
                 service.scene.remove(gobj);
             });
-            window.gra = service;
+            $window.gra = service;
             return service;
-        }]);
+
+                }]);

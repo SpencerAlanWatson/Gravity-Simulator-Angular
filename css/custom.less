@@ -1,0 +1,226 @@
+//Content varibles
+@content-bg-color: #33b5e5; //Nice blue
+//menu variables
+@menu-width: 100%;
+@menu-height: 200px;
+@menu-tounge: 44px;
+@menu-bg-color: #F80; //A nice dark orange
+@menu-translate: "translateY";
+@menu-position: top;
+//test-input variables
+@test-input-width: 67px;
+ *,
+*:after,
+*::before {
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html,
+body,
+.st-container,
+.st-pusher,
+.st-content {
+    height: 100%;
+    background: @content-bg-color;
+
+}
+.st-content {
+    overflow-y: scroll;
+    margin-top: -@menu-tounge;
+
+}
+.st-content,
+.st-content-inner {
+    position: relative;
+}
+.st-container {
+    position: relative;
+    overflow: hidden;
+}
+.st-pusher {
+    position: relative;
+    left: 0;
+    z-index: 99;
+    height: 100%;
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+}
+.st-pusher::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background: rgba(0, 0, 0, 0.2);
+    content: '';
+    opacity: 0;
+    -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
+    transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
+}
+.st-menu-open .st-pusher::after {
+    //top: @menu-tounge;
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+}
+.st-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    visibility: hidden;
+    width: @menu-width;
+    height: @menu-height;
+    background: @menu-bg-color;
+    -webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+.st-menu::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    content: "";
+    opacity: 1;
+    -webkit-transition: opacity 0.5s;
+    transition: opacity 0.5s;
+}
+.st-menu-open .st-menu::after {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    -webkit-transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
+    transition: opacity 0.5s, width 0.1s 0.5s, height 0.1s 0.5s;
+}
+@menu-tounge-border-radius: 5px;
+ .menu-tounge {
+    //    position: absolute;
+    //top: 0;
+    //left: 0;
+    //z-index: 100;
+    position: relative;
+    visibility: visible;
+    z-index: 100;
+    width: @menu-width * 0.5;
+    height: @menu-tounge; //- 2px;
+    margin: 0 25%;
+    padding: 5px 5px;
+    border-top-left-radius: -@menu-tounge-border-radius;
+
+border-top-right-radius: -@menu-tounge-border-radius;
+
+border-bottom-left-radius: @menu-tounge-border-radius;
+
+border-bottom-right-radius: @menu-tounge-border-radius;
+
+background: @menu-bg-color;
+
+-webkit-transition: all 0.5s;
+    transition: all 0.5s;
+}
+.st-menu-open .menu-tounge {
+    background-color: darken(@menu-bg-color, 10%);
+}
+.menu-tounge.menu-over {
+    //background-color: darken(@menu-bg-color, 10%);
+    margin-top: 10px;//translateY(5px);
+}
+.menu-tounge.menu-over.menu-over-btn {
+    margin-top: 0;
+}
+.st-menu-open .menu-tounge,
+.st-menu-open .menu-tounge.menu-over-btn,
+.st-menu-open .menu-tounge.menu-over-btn.menu-over{
+    margin-top: 0;
+}
+.st-menu-open .menu-tounge.menu-over{
+    margin-top: -10px;
+}
+//.st-menu-open
+/* Effect 3: Push*/
+
+.st-effect-3.st-menu-open .st-pusher {
+    -webkit-transform: translateY(@menu-height);
+
+transform: translateY(@menu-height);
+
+}
+.st-effect-3.st-menu {
+    visibility: visible;
+    -webkit-transform: translateY(-@menu-height);
+
+transform: translateY(-@menu-height );
+}
+.st-effect-3.st-menu-open .st-effect-3.st-menu {
+    visibility: visible;
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+}
+.st-effect-3.st-menu::after {
+    display: none;
+}
+.object-menu {
+    background-color: rgba(0, 0, 0, 0.2);//spin(@menu-bg-color,-5%);
+    max-height: 80%;
+    overflow-y: scroll;
+    padding: 10px;
+    margin: 5px 5%;
+}
+@object-info-bg-color :spin(@menu-bg-color, 5%);
+ .object-info {
+    display: block;
+    background-color: @object-info-bg-color;
+
+margin: 10px 5%;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+.object-info label {
+    background-color: @content-bg-color;
+
+color: contrast(@content-bg-color);
+
+border-radius: 5px;
+}
+.object-info > button {
+    float: right;
+    line-height: 1;
+    margin-left: 5px;
+}
+.test-input {
+    font-family: "Roboto Condensed";
+    /*font-family:"Courier New", Courier, monospace;
+            font-family:"Lucida Console", Monaco, monospace;*/
+    font-size: 12px;
+    font-weight: bold;
+    width: @test-input-width;
+
+border-width: 1px;
+    padding: 0;
+}
+.toggle-container {
+    font-family: "Roboto Condensed", monospace;
+    margin: 0;
+    padding: 0;
+}
+.toggle-container .toggle-text {
+    margin: 0;
+    margin-right: 1px;
+}
+.toggle-container .toggle-input {
+    .test-input();
+}
+.object-pos-title {
+    display: inline-block;
+    font-family: "Roboto Condensed", monospace;
+    font-weight: 500;
+    text-align: center;
+    width: 80px;
+}
+.ng-hide {
+    display: none !important;
+}

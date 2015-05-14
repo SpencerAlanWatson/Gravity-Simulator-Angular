@@ -1,0 +1,33 @@
+{
+  "name": "Gravity-Simulator-Angular",
+  "version": "0.0.3",
+  "homepage": "https://github.com/SpencerAlanWatson/Gravity-Simulator-Angular",
+  "authors": [
+    "Spencer Alan Watson <spenceralanwatson@gmail.com>"
+  ],
+  "description": "Simulation of gravity between objects using ThreeJS",
+  "main": "index.html",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "gravity",
+    "javascript",
+    "threejs",
+    "web-gl",
+    "html5",
+    "angular"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "less": "~1.7.5"
+  }
+}

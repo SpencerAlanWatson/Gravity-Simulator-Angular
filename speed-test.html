@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js">
+<!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Gravity!</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+    <!-- Add your site or application content here -->
+    <!--<p>Hello world! This is HTML5 Boilerplate.</p>-->
+
+    <div id="st-container" class="st-container st-effect-3 ">
+        <div class="st-content">
+            <!-- this is the wrapper for the content -->
+            <div class="st-content-inner">
+                <!-- extra div for emulating position:fixed of the menu -->
+                <div class="main clearfix" id="main">
+                    <div id="output-div"></div>
+                    <pre id="output-pre"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')
+    </script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    <!--<script src="js/vendor/angular.js"></script>-->
+    <script src="js/vendor/three.js"></script>
+    <script src="js/vendor/underscore.js"></script>
+    <script src="dev/vendor/benchmark.js"></script>
+    <script src="js/gravity-object-factory.js"></script>
+   <script src="dev/speed-test.js"></script>
+   <!-- <script>
+        function Point(x, y, z) {
+            //Enough to fit 3 64bit Floats
+            Float64Array.call(this, 3); 
+            this[0] = x;
+            this[1] = y;
+            this[2] = z;
+            
+        };
+        var myWorker = new Worker("dev/speed-test.js");
+
+        myWorker.addEventListener("message", function (oEvent) {
+            console.log("Called back by the worker!\n");
+            console.log(oEvent);
+        }, false);
+
+        //myWorker.postMessage("run bm_neg"); // start the worker.
+    </script>-->
+</body>
+
+</html>
